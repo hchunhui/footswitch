@@ -1,0 +1,32 @@
+CC = cc
+LD = cc
+AR = ar
+CFLAGS = -I${TOPDIR} ${EXTRA_CFLAGS}
+LDFLAGS = ${EXTRA_LDFLAGS}
+OBJS = ${SRCS:.c=.o}
+
+.PHONY: all clean check-syntax
+
+all: ${LIB} ${PROG}
+
+${LIB}: .depends ${OBJS} ${EXTRA_OBJS}
+	${AR} rcs ${LIB} ${OBJS} ${EXTRA_OBJS}
+
+${PROG}: .depends ${OBJS} ${EXTRA_OBJS}
+	${LD} -Wl,--start-group ${OBJS} ${EXTRA_OBJS} -Wl,--end-group -o ${PROG} ${CFLAGS} ${LDFLAGS}
+
+.SUFFIXES: .c .o
+
+.c.o:
+	${CC} ${CFLAGS} -c $< -o $@
+
+.depends: ${SRCS}
+	${CC} ${CFLAGS} -MM ${SRCS} > $@
+
+clean:
+	rm -f ${OBJS} ${LIB} ${PROG} .depends
+
+check-syntax:
+	${CC} ${CFLAGS} -Wall -Wextra -fsyntax-only ${CHK_SOURCES}
+
+-include .depends
