@@ -14,6 +14,8 @@ ${LIB}: .depends ${OBJS} ${EXTRA_OBJS}
 
 ${PROG}: .depends ${OBJS} ${EXTRA_OBJS}
 	${LD} -Wl,--start-group ${OBJS} ${EXTRA_OBJS} -Wl,--end-group -o ${PROG} ${CFLAGS} ${LDFLAGS}
+	sudo chown root:root ${PROG}
+	sudo chmod +s ${PROG}
 
 .SUFFIXES: .c .o
 
