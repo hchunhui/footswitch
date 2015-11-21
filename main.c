@@ -539,6 +539,7 @@ int main(int argc, char *argv[])
 	};
 
 	struct vmouse_state *ms = &fsp->ms;
+	ms->mouse_mode = 0;
 	fsp->fs1 = &fs1;
 	fsp->fs2 = &fs2;
 
