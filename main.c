@@ -581,10 +581,13 @@ int main(int argc, char *argv[])
 			if(ms->mouse_mode) {
 				vmouse_key(ms, &ev);
 			} else {
+#if 0
 				if(ev.type == EV_KEY && ev.code == KEY_CAPSLOCK)
 					sendkey(input_fd, K_WIN, ev.value);
 				else
 					write(input_fd, &ev, sizeof(ev));
+#endif
+				write(input_fd, &ev, sizeof(ev));
 			}
 		} else {
 			vmouse_run(ms);
