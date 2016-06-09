@@ -41,7 +41,6 @@ static void k ##_up() \
 	sendkey(input_fd, K_##k, 0); \
 }
 
-
 int is_event_device(const struct dirent *dir)
 {
 	return strncmp("event", dir->d_name, 5) == 0;
@@ -80,11 +79,13 @@ int open_input(char *name)
 	abort();
 }
 
-int serial_open()
+int serial_open(const char *name)
 {
 	int fd;
 	int status;
-	fd = open("/dev/ttyUSB0", O_RDONLY);
+	fd = open(name, O_RDONLY);
+	if(fd < 0)
+		return -1;
 	status = TIOCM_DTR;
 	ioctl(fd, TIOCMBIS, &status);
 	status = TIOCM_RTS;
@@ -99,6 +100,8 @@ int serial_open()
 int serial_get_status(int fd)
 {
 	int status;
+	if(fd < 0)
+		return 0;
 	ioctl(fd, TIOCMGET, &status);
 	return status;
 }
@@ -543,7 +546,11 @@ int main(int argc, char *argv[])
 	fsp->fs1 = &fs1;
 	fsp->fs2 = &fs2;
 
-	fd = serial_open();
+	if(argc == 2) {
+		fd = serial_open(argv[1]);
+	} else {
+		fd = serial_open("/dev/ttyUSB0");
+	}
 	input_fd = uinput_open();
 	kfd = open_input("CATEX TECH. 104EC-Pro");
 
